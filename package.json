@@ -1,0 +1,16 @@
+{
+  "name": "tbot-gas-md",
+  "version": "0.0.0",
+  "description": "Telegram Bot GAS (Google Apps Script) Markdown",
+  "scripts": {
+    "test": "prettier -w . && clasp push"
+  },
+  "keywords": [],
+  "author": "Salman <salmantok.dev@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salmantok/tbot-gas-md.git"
+  },
+  "homepage": "https://t.me/tbot_release"
+}
