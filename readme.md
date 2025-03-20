@@ -14,6 +14,48 @@ Untuk menggunakannya, selesaikan konfigurasi fungsi `setProperties`, lalu jalank
 
 > Catatan: Jika menggunakan [@google/clasp](https://developers.google.com/apps-script/guides/clasp), pastikan `scriptId` di file `.clasp.json` sudah benar.
 
+## Cara Menambahkan Perintah ke Bot
+
+Bot ini membaca file `.md` untuk merespons perintah. Setiap file `.md` yang dibuat akan menjadi perintah bot dengan nama file sebagai nama perintah.
+
+### Contoh:
+
+Buat file `start.md` untuk menangani perintah `/start`.
+
+#### Isi `start.md`
+
+```md
+Halo! Selamat datang di bot.
+```
+
+#### Hasil di Telegram:
+
+```
+Halo! Selamat datang di bot.
+```
+
+## Menggunakan `await` untuk Mengirim Beberapa Pesan
+
+Jika ingin mengirim beberapa pesan secara terpisah, gunakan `await` di antara baris teks.
+
+#### Isi `start.md`
+
+```md
+Halo!
+await
+Selamat datang di bot.
+```
+
+#### Hasil di Telegram:
+
+```
+Halo!
+```
+
+```
+Selamat datang di bot.
+```
+
 ## API
 
 [Telegram Bot API](https://core.telegram.org/bots/api)

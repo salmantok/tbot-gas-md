@@ -5,7 +5,6 @@
   "scripts": {
     "test": "prettier -w . && clasp push"
   },
-  "keywords": [],
   "author": "Salman <salmantok.dev@gmail.com>",
   "license": "MIT",
   "repository": {
