@@ -16,7 +16,7 @@ Untuk menggunakannya, selesaikan konfigurasi fungsi `setProperties`, lalu jalank
 
 ## Cara Menambahkan Perintah ke Bot
 
-Bot ini membaca file `.md` untuk merespons perintah. Setiap file `.md` yang dibuat akan menjadi perintah bot dengan nama file sebagai nama perintah kecuali file `on.md` yang akan menjadi event listener.
+Bot ini membaca file `.md` untuk merespons perintah. Setiap file `.md` yang dibuat akan menjadi perintah bot dengan nama file sebagai nama perintah.
 
 ### Contoh:
 
