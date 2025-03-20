@@ -85,10 +85,34 @@ function handleOnMessage(message) {
   const chatId = message.chat.id;
   const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
   let onMdContent = null;
+  let hearsContent = null;
 
-  const files = rootFolder.getFilesByName('on.md');
-  if (files.hasNext()) {
-    onMdContent = files.next().getBlob().getDataAsString();
+  const filesHears = rootFolder.getFilesByName('hears.md');
+  if (filesHears.hasNext()) {
+    hearsContent = filesHears.next().getBlob().getDataAsString();
+  }
+
+  const filesOn = rootFolder.getFilesByName('on.md');
+  if (filesOn.hasNext()) {
+    onMdContent = filesOn.next().getBlob().getDataAsString();
+  }
+
+  if (hearsContent) {
+    const hearsLines = hearsContent.split('\n');
+    const hearsMap = {};
+
+    hearsLines.forEach((line) => {
+      const [keyword, response] = line.split(':').map((s) => s.trim());
+      if (keyword && response) {
+        hearsMap[keyword.toLowerCase()] = response;
+      }
+    });
+
+    const userMessage = message.text.toLowerCase();
+    if (hearsMap[userMessage]) {
+      sendMessage(chatId, hearsMap[userMessage], { parse_mode: 'Markdown' });
+      return;
+    }
   }
 
   if (onMdContent && message.chat.type === 'private') {
