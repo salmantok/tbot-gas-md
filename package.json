@@ -1,6 +1,6 @@
 {
   "name": "tbot-gas-md",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Telegram Bot GAS (Google Apps Script) Markdown",
   "scripts": {
     "test": "prettier -w . && clasp push"
