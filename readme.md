@@ -40,7 +40,9 @@ Jika ingin mengirim beberapa pesan secara terpisah, gunakan `await` di antara ba
 
 ```md
 Halo!
+
 await
+
 Selamat datang di bot.
 ```
 
@@ -72,7 +74,7 @@ Jika pengguna mengirim pesan yang bukan perintah (misalnya: `Halo`, `P`), bot ak
 
 ### Cara Membuat `hears.md`
 
-Buat file `hears.md` di Google Drive dengan format berikut:
+Buat file `hears.md` dengan format berikut:
 
 ```md
 Kata Kunci: Respons
@@ -140,6 +142,90 @@ hai: Halo juga!
 ```
 
 Dengan ini, bot akan mengenali baik `"Hai"` maupun `"hai"` sebagai input valid.
+
+## Penggunaan Inline Keyboard
+
+Inline keyboard memungkinkan pengguna berinteraksi langsung dengan bot tanpa perlu mengetik perintah tambahan.
+
+### Format Inline Keyboard dalam Markdown
+
+Bot ini mendukung inline keyboard dengan format sebagai berikut:
+
+```md
+[Teks Tombol](callback:data)
+[Teks Tombol](url:https://example.com)
+```
+
+### Penjelasan:
+
+- `callback:data` → Tombol akan mengirim `callback_data` ke bot saat ditekan.
+- `url:https://example.com` → Tombol akan membuka URL saat ditekan.
+
+### Contoh Penggunaan Inline Keyboard dalam Pesan
+
+#### Pesan dengan Satu Tombol:
+
+```md
+Klik tombol di bawah ini untuk menyapa:
+[Say Hello](callback:hello)
+```
+
+#### Hasil:
+
+- Teks: `"Klik tombol di bawah ini untuk menyapa:"`
+- Tombol: `"Say Hello"` → (Mengirim callback `"hello"`)
+
+#### Pesan dengan Banyak Tombol:
+
+```md
+Pilih opsi yang tersedia:
+[Google](url:https://google.com)
+[Bing](url:https://bing.com)
+[Say Hi](callback:hi)
+```
+
+#### Hasil:
+
+- `"Google"` → Buka `https://google.com`
+- `"Bing"` → Buka `https://bing.com`
+- `"Say Hi"` → Kirim callback `"hi"` ke bot
+
+#### Pesan dengan beberapa tombol Baris Baru:
+
+Untuk membuat beberapa tombol dengan baris baru, gunakan pemisah `---`:
+
+```md
+Silakan pilih:
+[Tombol 1](callback:one)
+[Tombol 2](callback:two)
+
+---
+
+[Tombol 3](callback:three)
+```
+
+#### Hasil:
+
+`Silakan pilih:`
+
+`[ Tombol 1 ][ Tombol 2 ]`
+
+`[ Tombol 3 ]`
+
+- Tombol 1 dan 2 berada dalam satu baris
+- Tombol 3 ada di bawahnya
+
+### Kesimpulan
+
+- ✔️ Mendukung tombol URL
+- ✔️ Mendukung tombol callback
+- ✔️ Callback dapat ditangani dengan benar
+
+Sekarang bot siap digunakan dengan inline keyboard yang berfungsi dengan baik!
+
+### Kekurangan
+
+- ❌ answerCbQuery dan deleteMessages belum didukung
 
 ## API
 

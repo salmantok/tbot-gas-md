@@ -18,7 +18,12 @@ const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 
 function doPost(e) {
   const update = JSON.parse(e.postData.contents);
-  if (update.message) processMessage(update.message);
+
+  if (update.message) {
+    processMessage(update.message);
+  } else if (update.callback_query) {
+    handleCallback(update.callback_query);
+  }
 }
 
 function processMessage(message) {
@@ -120,15 +125,58 @@ function handleOnMessage(message) {
   }
 }
 
+function parseInlineKeyboard(text) {
+  const regex = /\[(.*?)\]\((callback|url):([^)]+)\)|---/g;
+  let match;
+  let keyboard = [];
+  let row = [];
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match[0] === '---') {
+      if (row.length > 0) {
+        keyboard.push(row);
+        row = [];
+      }
+      continue;
+    }
+
+    const [, label, type, value] = match;
+
+    if (type === 'callback') {
+      row.push({ text: label, callback_data: value });
+    } else if (type === 'url') {
+      row.push({ text: label, url: value });
+    }
+  }
+
+  if (row.length > 0) {
+    keyboard.push(row);
+  }
+
+  return keyboard.length ? { inline_keyboard: keyboard } : null;
+}
+
 function sendMessage(chatId, text, options = {}) {
   if (!chatId || !text) return;
 
-  const payload = { chat_id: chatId, text: text, ...options };
+  const keyboard = parseInlineKeyboard(text);
+  text = text.replace(/\[.*?\]\((callback|url):[^)]+\)|---/g, '');
+
+  const payload = { chat_id: chatId, text, ...options };
+  if (keyboard) payload.reply_markup = JSON.stringify(keyboard);
+
   UrlFetchApp.fetch(`${API_URL}/sendMessage`, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify(payload),
   });
+}
+
+function handleCallback(callbackQuery) {
+  const chatId = callbackQuery.message.chat.id;
+  const data = callbackQuery.data;
+
+  sendMessage(chatId, data);
 }
 
 function setWebhook() {
