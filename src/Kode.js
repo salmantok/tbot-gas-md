@@ -73,7 +73,9 @@ function handleCommand(message) {
       if (message.text.startsWith(commandName)) {
         if (message.chat.type !== 'private') return;
 
-        const parts = content.split(/await\s*\d*/g).map((part) => part.trim());
+        const parts = content
+          .split(/{reply}\s*\d*/g)
+          .map((part) => part.trim());
 
         for (const part of parts) {
           if (part) {
@@ -89,8 +91,9 @@ function handleCommand(message) {
 function handleOnMessage(message) {
   const chatId = message.chat.id;
   const rootFolder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
-  let onMdContent = null;
+
   let hearsContent = null;
+  let onMdContent = null;
 
   const filesHears = rootFolder.getFilesByName('hears.md');
   if (filesHears.hasNext()) {
@@ -105,7 +108,6 @@ function handleOnMessage(message) {
   if (hearsContent) {
     const hearsLines = hearsContent.split('\n');
     const hearsMap = {};
-
     hearsLines.forEach((line) => {
       const [keyword, response] = line.split(':').map((s) => s.trim());
       if (keyword && response) {
@@ -159,24 +161,72 @@ function parseInlineKeyboard(text) {
 function sendMessage(chatId, text, options = {}) {
   if (!chatId || !text) return;
 
+  const deleteMatch = text.match(/\{deleteMessage:(\d+)\}/);
+  let deleteDelay = deleteMatch ? parseInt(deleteMatch[1]) * 1000 : null;
+
+  text = text.replace(/\{deleteMessage:\d+\}/, '');
+
   const keyboard = parseInlineKeyboard(text);
   text = text.replace(/\[.*?\]\((callback|url):[^)]+\)|---/g, '');
 
   const payload = { chat_id: chatId, text, ...options };
   if (keyboard) payload.reply_markup = JSON.stringify(keyboard);
 
-  UrlFetchApp.fetch(`${API_URL}/sendMessage`, {
+  const response = UrlFetchApp.fetch(`${API_URL}/sendMessage`, {
     method: 'post',
     contentType: 'application/json',
     payload: JSON.stringify(payload),
   });
+
+  if (deleteDelay) {
+    const messageId = JSON.parse(response.getContentText()).result.message_id;
+    Utilities.sleep(deleteDelay);
+    deleteMessage(chatId, messageId);
+  }
+}
+
+function deleteMessage(chatId, messageId) {
+  if (!chatId || !messageId) return;
+
+  UrlFetchApp.fetch(`${API_URL}/deleteMessage`, {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify({
+      chat_id: chatId,
+      message_id: messageId,
+    }),
+  });
 }
 
 function handleCallback(callbackQuery) {
+  const callbackId = callbackQuery.id;
   const chatId = callbackQuery.message.chat.id;
   const data = callbackQuery.data;
 
-  sendMessage(chatId, data);
+  if (data.startsWith('popup+message:')) {
+    const [, popupText, messageText] = data.split(':');
+    answerCallbackQuery(callbackId, popupText, true);
+    sendMessage(chatId, messageText);
+  } else if (data.startsWith('popup:')) {
+    const popupText = data.replace('popup:', '');
+    answerCallbackQuery(callbackId, popupText, true);
+  } else {
+    sendMessage(chatId, data);
+  }
+}
+
+function answerCallbackQuery(callbackQueryId, text, showAlert = false) {
+  const payload = {
+    callback_query_id: callbackQueryId,
+    text: text,
+    show_alert: showAlert,
+  };
+
+  UrlFetchApp.fetch(`${API_URL}/answerCallbackQuery`, {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify(payload),
+  });
 }
 
 function setWebhook() {

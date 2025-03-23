@@ -34,14 +34,14 @@ Halo! Selamat datang di bot.
 
 ## Menggunakan `await` untuk Mengirim Beberapa Pesan
 
-Jika ingin mengirim beberapa pesan secara terpisah, gunakan `await` di antara baris teks.
+Jika ingin mengirim beberapa pesan secara terpisah, gunakan `{reply}` di antara baris teks.
 
 #### Isi `start.md`:
 
 ```md
 Halo!
 
-await
+{reply}
 
 Selamat datang di bot.
 ```
@@ -217,15 +217,93 @@ Silakan pilih:
 
 ### Kesimpulan
 
-- ✔️ Mendukung tombol URL
-- ✔️ Mendukung tombol callback
-- ✔️ Callback dapat ditangani dengan benar
+- ️ Mendukung tombol URL
+- ️ Mendukung tombol callback
+- ️ Callback dapat ditangani dengan benar
 
 Sekarang bot siap digunakan dengan inline keyboard yang berfungsi dengan baik!
 
-### Kekurangan
+## Penggunaan Fitur Popup
 
-- ❌ answerCbQuery dan deleteMessages belum didukung
+Fitur `popup` digunakan untuk menampilkan pesan pop-up di Telegram ketika pengguna menekan tombol inline keyboard.
+
+### Cara Penggunaan di Markdown
+
+Gunakan format berikut dalam file Markdown (`.md`):
+
+```md
+[Klik Saya](callback:popup:Ini adalah popup!)
+```
+
+Atau, jika ingin popup sekaligus mengirim pesan ke chat:
+
+```
+[Klik Saya](callback:popup+message:Ini popup!:Pesan baru yang dikirim)
+```
+
+### Contoh Kasus
+
+#### Hanya menampilkan popup
+
+```md
+[Info](callback:popup:Selamat datang di bot kami!)
+```
+
+Saat tombol diklik, popup akan muncul tanpa mengirim pesan baru.
+
+#### Menampilkan popup dan mengirim pesan baru
+
+```md
+[Konfirmasi](callback:popup+message:Berhasil!:Data Anda telah disimpan)
+```
+
+Saat tombol diklik, popup muncul dan bot mengirim pesan `"Data Anda telah disimpan"` ke chat.
+
+## Fitur Hapus Pesan
+
+Fitur ini memungkinkan Markdown menentukan pesan yang akan dihapus secara otomatis setelah beberapa detik.
+
+### Cara Penggunaan di Markdown
+
+Gunakan format berikut di file `.md`:
+
+```md
+Pesan ini akan otomatis terhapus dalam 5 detik.
+{deleteMessage:5}
+```
+
+Angka setelah `{deleteMessage:}` menunjukkan waktu dalam detik sebelum pesan dihapus.
+
+### Contoh Kasus
+
+#### Menghapus pesan setelah 10 detik
+
+```md
+Pesan ini akan dihapus dalam 10 detik.
+{deleteMessage:10}
+```
+
+#### Menghapus pesan yang berisi tombol inline
+
+```md
+Pilih opsi di bawah ini:
+[Opsi 1](callback:data1)
+
+---
+
+[Opsi 2](callback:data2)
+{deleteMessage:7}
+```
+
+Pesan akan dihapus setelah 7 detik, termasuk tombol-tombolnya.
+
+## Kesimpulan
+
+- `popup` Menampilkan pesan pop-up saat tombol ditekan
+- `popup+message` Menampilkan popup dan mengirim pesan baru
+- `{deleteMessage:X}` Menghapus pesan setelah X detik
+
+Silakan gunakan fitur ini dalam bot Anda untuk pengalaman yang lebih interaktif!
 
 ## API
 
