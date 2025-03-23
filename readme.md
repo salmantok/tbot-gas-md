@@ -32,7 +32,7 @@ Halo! Selamat datang di bot.
 
 `Halo! Selamat datang di bot.`
 
-## Menggunakan `await` untuk Mengirim Beberapa Pesan
+## Menggunakan `{reply}` untuk Mengirim Beberapa Pesan
 
 Jika ingin mengirim beberapa pesan secara terpisah, gunakan `{reply}` di antara baris teks.
 
